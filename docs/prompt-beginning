@@ -1,0 +1,24 @@
+Read and follow these files as the source of truth:
+- AGENTS.md
+- docs/MVP.md
+- docs/architecture.md
+- docs/current-phase.md
+- docs/progress.md
+
+Continue Orbit Control from the active step in docs/current-phase.md.
+
+The MVP, Playwright baseline, real API dashboard enhancement, Docker, and CI are
+already implemented. Current work is the scoped design migration. Do not expand
+product scope beyond the current step unless explicitly requested.
+
+Preserve existing data-testid selectors during design-only refactors.
+
+Before implementation, give me:
+- a short plan
+- the list of files to create/change
+
+After implementation, run:
+- npm run typecheck
+- npm run lint
+- npm run build
+- npx playwright test

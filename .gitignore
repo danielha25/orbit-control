@@ -1,0 +1,10 @@
+.next
+node_modules
+.env
+playwright-report
+test-results
+coverage
+dist
+*.log
+tsconfig.tsbuildinfo
+cookies.txt
