@@ -7,15 +7,19 @@ on:
       - "**"
   workflow_dispatch:
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DATABASE_URL: postgresql://postgres:postgres@localhost:5432/orbit_control?schema=public
+  NASA_API_KEY: DEMO_KEY
+  SPACE_API_MODE: mock
+  SPACE_API_TIMEOUT_MS: 5000
+
 jobs:
   static-quality:
     runs-on: ubuntu-latest
-
-    env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/orbit_control?schema=public
-      NASA_API_KEY: DEMO_KEY
-      SPACE_API_MODE: mock
-      SPACE_API_TIMEOUT_MS: 5000
 
     steps:
       - name: Checkout
@@ -44,12 +48,6 @@ jobs:
 
     needs:
       - static-quality
-
-    env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/orbit_control?schema=public
-      NASA_API_KEY: DEMO_KEY
-      SPACE_API_MODE: mock
-      SPACE_API_TIMEOUT_MS: 5000
 
     steps:
       - name: Checkout
@@ -91,12 +89,6 @@ jobs:
           --health-timeout 5s
           --health-retries 10
 
-    env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/orbit_control?schema=public
-      NASA_API_KEY: DEMO_KEY
-      SPACE_API_MODE: mock
-      SPACE_API_TIMEOUT_MS: 5000
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -118,6 +110,21 @@ jobs:
 
       - name: Seed database
         run: npx prisma db seed
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+
+      - name: Install Playwright system deps
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
 
       - name: Quality gate - API tests
         run: npm run test:api
@@ -136,6 +143,11 @@ jobs:
     needs:
       - build
 
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
+
     services:
       postgres:
         image: postgres:16-alpine
@@ -150,12 +162,6 @@ jobs:
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
-
-    env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/orbit_control?schema=public
-      NASA_API_KEY: DEMO_KEY
-      SPACE_API_MODE: mock
-      SPACE_API_TIMEOUT_MS: 5000
 
     steps:
       - name: Checkout
@@ -179,17 +185,29 @@ jobs:
       - name: Seed database
         run: npx prisma db seed
 
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
       - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps
 
+      - name: Install Playwright system deps
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps
+
       - name: Quality gate - UI tests
-        run: npm run test:ui
+        run: npm run test:ui -- --shard=${{ matrix.shard }}/${{ strategy.job-total }}
 
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ui-playwright-report
+          name: ui-playwright-report-shard-${{ matrix.shard }}
           path: playwright-report/
           if-no-files-found: ignore
 
@@ -197,7 +215,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ui-test-results
+          name: ui-test-results-shard-${{ matrix.shard }}
           path: test-results/
           if-no-files-found: ignore
 

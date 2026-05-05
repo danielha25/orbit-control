@@ -1,5 +1,7 @@
 # Orbit Control
 
+[![CI](https://github.com/danielha25/orbit-control/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/danielha25/orbit-control/actions/workflows/ci.yml)
+
 Orbit Control is a small QA Automation / SDET portfolio app for tracking seeded
 space objects, managing a watchlist, and creating monitoring missions.
 

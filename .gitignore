@@ -10,3 +10,4 @@ dist
 tsconfig.tsbuildinfo
 cookies.txt
 /*.png
+docs/portfolio-talk.md
