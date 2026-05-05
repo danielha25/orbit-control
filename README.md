@@ -1,5 +1,7 @@
 # Orbit Control
 
+[![CI](https://github.com/danielha25/orbit-control/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/danielha25/orbit-control/actions/workflows/ci.yml)
+
 Orbit Control is a small QA Automation / SDET portfolio app for tracking seeded
 space objects, managing a watchlist, and creating monitoring missions.
 
@@ -9,21 +11,21 @@ automation and infrastructure layers are explicit and easy to discuss.
 ## Current Status
 
 The MVP is implemented: auth, dashboard, watchlist, missions CRUD, API routes,
-Prisma/PostgreSQL, Playwright UI/API smoke coverage, Docker Compose, and GitHub
-Actions CI are in place.
+Prisma/PostgreSQL, Playwright UI/API coverage, Docker Compose, and GitHub
+Actions quality gates are in place.
 
 The current workstream is a scoped design migration. Completed design steps:
 
 - Foundation shell and design tokens
 - Dashboard redesign with live space signals
-- Missions list redesign
-
-Next planned design steps:
-
 - Mission detail redesign
 - Mission composer modal
 - Watchlist redesign
 - Polish pass for toasts and auth pages
+
+The test framework was also hardened as a portfolio artifact: UI tests are split
+by feature, API tests cover auth/dashboard/watchlist/missions contracts, and CI
+publishes separate API/UI Playwright artifacts.
 
 ## Stack
 
@@ -89,6 +91,18 @@ npx playwright test
 Playwright starts its own Next.js server on `127.0.0.1:3101` with
 `SPACE_API_MODE=mock`.
 
+For the local equivalent of CI static gates:
+
+```bash
+npm run quality:static
+```
+
+For the full local gate set:
+
+```bash
+npm run quality
+```
+
 ## Docker
 
 ```bash
@@ -103,12 +117,28 @@ data, and runs the Next.js app on `http://localhost:3000`.
 Current automation covers:
 
 - UI auth and dashboard smoke flows
+- UI watchlist add/filter/remove flows
+- UI mission create/detail/update/search/filter/delete flows
 - API auth session contracts
 - API dashboard contract with deterministic external API data
+- API watchlist add/list/delete and duplicate/unauthorized contracts
 - API mission create/list/get/update/delete flow
 - DB-aware verification helpers for user/session/mission state
+- Page objects for login, dashboard, watchlist, and missions
 
-The current baseline is 13 Playwright tests.
+The current baseline is 24 Playwright tests across 7 feature-oriented files.
+
+See `docs/test-framework.md` for the test architecture and CI quality gates.
+
+## CI Quality Gates
+
+GitHub Actions runs the pipeline as separate, reviewable gates:
+
+- `static-quality`: Prisma client generation, TypeScript typecheck, ESLint
+- `build`: production Next.js build
+- `api-tests`: PostgreSQL service, migrations, seed, Playwright API tests
+- `ui-tests`: PostgreSQL service, migrations, seed, Playwright UI tests
+- `quality-gates`: aggregate required status for branch protection
 
 ## Useful Scripts
 

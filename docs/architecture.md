@@ -21,7 +21,8 @@ project-root/
 │   ├── architecture.md        # this file
 │   ├── auth-test-plan.md      # auth automation contract and matrix
 │   ├── current-phase.md       # active phase focus for agents
-│   └── progress.md            # durable completed-work log
+│   ├── progress.md            # durable completed-work log
+│   └── test-framework.md      # automation framework and CI quality gates
 ├── prisma/
 │   ├── schema.prisma          # single schema file
 │   ├── migrations/
@@ -71,7 +72,7 @@ project-root/
 │   │   └── db.ts              # direct DB helpers for verification
 │   └── data/                  # test data constants
 ├── .github/
-│   └── workflows/ci.yml       # CI pipeline
+│   └── workflows/ci.yml       # CI quality gates
 ├── Dockerfile
 ├── docker-compose.yml         # local infra
 ├── playwright.config.ts
@@ -165,7 +166,8 @@ Current design migration status:
 
 - Foundation shell and dashboard redesign are complete
 - Missions list redesign is complete
-- Mission detail, mission composer, watchlist, and polish remain planned
+- Mission detail, mission composer, watchlist, and main polish items are complete
+- Optional richer seed metadata remains as a small follow-up
 
 Design migration is allowed to restyle existing behavior, but should not add
 new product scope unless `docs/current-phase.md` says so.
@@ -186,7 +188,7 @@ new product scope unless `docs/current-phase.md` says so.
 - DB helpers live in `tests/utils/db.ts` — direct Prisma queries for state verification
 - Test fixtures live in `tests/fixtures/` — shared setup/teardown and test user creation
 - Test data constants live in `tests/data/` — reusable emails, titles, object names
-- Each test file maps to one feature, for example: `auth.spec.ts`, `dashboard.api.spec.ts`, `missions.api.spec.ts`
+- Each test file maps to one feature, for example: `auth.spec.ts`, `dashboard.api.spec.ts`, `watchlist.ui.spec.ts`, `missions.ui.spec.ts`
 - Tests must not depend on each other — each test sets up and cleans its own state
 - Prefer API-based setup for faster and more stable tests
 - UI tests should cover user-facing flows; API and DB helpers should support setup, verification, and cleanup
@@ -248,6 +250,10 @@ Runtime behavior:
 Docker Compose starts PostgreSQL and the Next.js app together. The app container
 applies Prisma migrations and seeds deterministic data before starting.
 
-GitHub Actions uses a PostgreSQL service container, runs Prisma migrations and
-seed data, typechecks, builds, installs Playwright browsers, runs Playwright,
-and uploads report artifacts.
+GitHub Actions is split into quality gates:
+
+- `static-quality` generates Prisma client, typechecks, and lints
+- `build` verifies a production Next.js build
+- `api-tests` starts PostgreSQL, applies migrations, seeds data, and runs Playwright API tests
+- `ui-tests` starts PostgreSQL, applies migrations, seeds data, installs browsers, and runs Playwright UI tests
+- `quality-gates` aggregates the required status for branch protection

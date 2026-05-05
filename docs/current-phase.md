@@ -18,6 +18,7 @@ Step 5 - Polish.
 - ✅ Auth page redesign (`/login`, `/register`).
 - ✅ Remove unused `src/components/app-header.tsx`.
 - ✅ Promote only real live NASA NeoWs near-earth objects into trackable catalog objects for watchlist and mission creation.
+- ✅ User-requested automation framework hardening and CI quality gates.
 - ⏳ Optional: richer seed metadata for catalog cards.
 
 ## Step 5 progress notes
@@ -37,10 +38,17 @@ Step 5 - Polish.
 - Catalog cards expose `+ Watchlist` and `New mission` actions for trackable objects, including persisted live NeoWs objects.
 - Dashboard catalog is collapsed by default to the first five trackable objects and can smoothly expand/collapse the rest on demand.
 - ISS position now renders on a real projected world atlas (`d3-geo` + local `world-atlas`) instead of hand-drawn continent paths.
+- `tests/ui/full-e2e.spec.ts` was replaced with feature-oriented UI specs: `watchlist.ui.spec.ts` and `missions.ui.spec.ts`.
+- `tests/api/watchlist.api.spec.ts` covers watchlist add/list/delete, duplicate, and unauthorized contracts.
+- `tests/pages/missions-page.ts` and `tests/pages/watchlist-page.ts` extend the page-object layer; `test-fixtures.ts` exposes these page objects and an authenticated API request fixture.
+- `watchlist-service.ts` now maps Prisma watchlist enum values back to lowercase API/UI contract values (`watching`, `paused`, `archived`), which keeps status tabs and API assertions aligned.
+- `getCurrentUser()` no longer mutates cookies from server-rendered reads when a stale cookie points to a missing session; logout remains responsible for explicit cookie clearing.
+- CI now has separate `static-quality`, `build`, `api-tests`, `ui-tests`, and aggregate `quality-gates` jobs.
 
 ## Explicitly out of scope
-- API route changes.
-- Docker, CI/CD, and Playwright framework changes.
+- API route behavior changes.
+- Product expansion beyond the scoped polish/design migration.
+- Docker, CI/CD, and Playwright framework changes unless explicitly requested as an automation hardening pass.
 
 ## Source of truth
 - Product scope: `docs/MVP.md`

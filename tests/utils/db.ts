@@ -40,6 +40,23 @@ export async function findSeededObjectByExternalId(externalId: string) {
   });
 }
 
+export async function findWatchlistItemById(watchlistItemId: string) {
+  return testPrisma.watchlistItem.findUnique({
+    where: { id: watchlistItemId }
+  });
+}
+
+export async function findWatchlistItemByUserAndObject(userId: string, objectId: string) {
+  return testPrisma.watchlistItem.findUnique({
+    where: {
+      userId_objectId: {
+        userId,
+        objectId
+      }
+    }
+  });
+}
+
 export async function findMissionById(missionId: string) {
   return testPrisma.mission.findUnique({
     where: { id: missionId }

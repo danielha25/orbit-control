@@ -37,6 +37,28 @@ export async function getDashboard(request: APIRequestContext) {
   return request.get("/api/dashboard");
 }
 
+export async function listWatchlist(request: APIRequestContext) {
+  return request.get("/api/watchlist");
+}
+
+export async function addWatchlistItem(
+  request: APIRequestContext,
+  objectId: string
+) {
+  return request.post("/api/watchlist", {
+    data: {
+      objectId
+    }
+  });
+}
+
+export async function deleteWatchlistItem(
+  request: APIRequestContext,
+  watchlistItemId: string
+) {
+  return request.delete(`/api/watchlist/${watchlistItemId}`);
+}
+
 export async function createMission(
   request: APIRequestContext,
   mission: {

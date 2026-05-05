@@ -10,6 +10,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:seed": "prisma db seed",
+    "quality:static": "npm run typecheck && npm run lint",
+    "quality": "npm run quality:static && npm run build && npm run test",
     "typecheck": "tsc --noEmit",
     "test": "playwright test",
     "test:ui": "playwright test tests/ui",

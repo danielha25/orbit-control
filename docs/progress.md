@@ -127,6 +127,18 @@
   - catalog cards now show live feed summaries for APOD, ISS, the aggregate near-earth feed, and persisted individual near-earth objects
   - dashboard catalog now shows the first five trackable objects by default with a smooth show more/show fewer control for the rest
   - ISS position map now uses `d3-geo`, `topojson-client`, and local `world-atlas` data instead of hand-drawn continent paths
+- User-requested automation framework hardening:
+  - removed the broad `tests/ui/full-e2e.spec.ts` draft in favor of feature-oriented UI specs
+  - added `tests/ui/watchlist.ui.spec.ts` for watchlist add/filter/remove flows
+  - added `tests/ui/missions.ui.spec.ts` for mission create/detail/update/search/filter/delete flows
+  - added `tests/api/watchlist.api.spec.ts` for watchlist route contracts and negative paths
+  - added page objects for missions and watchlist
+  - added an authenticated API request fixture for API-based setup
+  - normalized watchlist service responses to lowercase status values so API contracts and UI filters use the same external values
+  - removed cookie mutation from `getCurrentUser()` server-rendered reads for stale-cookie/missing-session cases
+  - added local `quality:static` and `quality` scripts
+  - split GitHub Actions into `static-quality`, `build`, `api-tests`, `ui-tests`, and aggregate `quality-gates`
+  - documented the automation architecture in `docs/test-framework.md`
 
 ## Implemented API routes
 - `POST /api/auth/register`
@@ -205,6 +217,13 @@
   - `npm run lint`
   - `npm run build`
   - `npx playwright test` with 13 passing tests
+- Automation framework hardening verification passed:
+  - `npm run typecheck`
+  - `npm run lint`
+  - `npm run build`
+  - `npm run test:api` with 11 passing tests
+  - `npm run test:ui` with 13 passing tests
+  - `npm run test` with 24 passing tests
 
 ## Current behavior notes
 - One user can have multiple active sessions
@@ -219,6 +238,4 @@
 - Design Migration Step 5 - Polish (in progress)
 
 ## Next planned step
-- Auth page redesign (`/login`, `/register`)
-- Remove unused `src/components/app-header.tsx`
 - Optional: richer seed metadata for catalog cards

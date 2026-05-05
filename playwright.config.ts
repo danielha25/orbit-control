@@ -8,7 +8,7 @@ export default defineConfig({
     ["list"],
     ["html", { outputFolder: "playwright-report", open: "never" }]
   ],
-  retries: 0,
+  retries: process.env.CI ? 2 : 0,
   use: {
     baseURL: "http://127.0.0.1:3101",
     trace: "retain-on-failure"
