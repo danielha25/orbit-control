@@ -244,9 +244,10 @@ The active object catalog should map to real data shown in the app.
 - Dashboard redesign — done
 - Missions list redesign — done
 - Mission detail redesign — done
-- Mission composer modal — next
-- Watchlist redesign — planned
-- Polish pass — planned
+- Mission composer modal — done
+- Watchlist redesign — done
+- Polish pass — in progress
+- Automation framework hardening and CI quality gates — done
 
 ## Final enhancement scope
 - NASA APOD data is displayed on the dashboard

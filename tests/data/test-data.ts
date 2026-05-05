@@ -3,6 +3,12 @@ export type TestUserCredentials = {
   password: string;
 };
 
+export const TEST_OBJECTS = {
+  APOD: "apod",
+  ISS: "iss",
+  NEAR_EARTH_ASTEROIDS: "near-earth-asteroids"
+} as const;
+
 function createUniqueSuffix() {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }

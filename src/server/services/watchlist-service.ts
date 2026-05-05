@@ -31,6 +31,11 @@ type DeleteWatchlistResult =
 
 const trackableObjectSources = new Set(["seed", "live-neows"]);
 const mockNeoWsExternalIdPrefix = "neows-mock-";
+const watchlistStatusReverseMap: Record<string, string> = {
+  WATCHING: "watching",
+  PAUSED: "paused",
+  ARCHIVED: "archived"
+};
 
 function normalizeMetadata(metadataJson: unknown): SpaceObjectMetadata {
   if (!metadataJson || typeof metadataJson !== "object") {
@@ -68,7 +73,7 @@ function mapWatchlistItem(item: {
 }): WatchlistItemData {
   return {
     id: item.id,
-    status: item.status,
+    status: watchlistStatusReverseMap[item.status] ?? item.status.toLowerCase(),
     createdAt: item.createdAt.toISOString(),
     object: {
       id: item.object.id,

@@ -31,4 +31,21 @@ export class DashboardPage {
     await expect(this.page.getByTestId("live-iss-position")).toBeVisible();
     await expect(this.page.getByTestId("live-asteroid-name")).toContainText("Mock NEO 2026 QA");
   }
+
+  async expectFeaturedObjectVisible() {
+    await expect(this.page.getByTestId("dashboard-featured-object")).toBeVisible();
+  }
+
+  async expectSidebarLiveSignalsVisible() {
+    await expect(this.page.getByTestId("sidebar-live-signals")).toBeVisible();
+  }
+
+  async addFeaturedObjectToWatchlist() {
+    const addButton = this.page
+      .getByTestId("dashboard-featured-object")
+      .locator("[data-testid^='add-watchlist-']");
+
+    await addButton.click();
+    await expect(addButton).toContainText("Watching");
+  }
 }

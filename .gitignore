@@ -3,8 +3,10 @@ node_modules
 .env
 playwright-report
 test-results
+.playwright-mcp
 coverage
 dist
 *.log
 tsconfig.tsbuildinfo
 cookies.txt
+/*.png

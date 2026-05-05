@@ -102,17 +102,15 @@ export async function getCurrentUser(): Promise<SessionUser | null> {
   });
 
   if (!session) {
-    cookieStore.delete(SESSION_COOKIE_NAME);
     return null;
   }
 
   if (session.expiresAt <= new Date()) {
-    await prisma.session.delete({
+    await prisma.session.deleteMany({
       where: {
         id: session.id
       }
     });
-    cookieStore.delete(SESSION_COOKIE_NAME);
     return null;
   }
 

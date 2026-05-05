@@ -1,16 +1,22 @@
 import { test as base, expect } from "@playwright/test";
+import type { APIRequestContext } from "@playwright/test";
 
 import { createTestUserCredentials, type TestUserCredentials } from "@/../tests/data/test-data";
 import { DashboardPage } from "@/../tests/pages/dashboard-page";
 import { LoginPage } from "@/../tests/pages/login-page";
-import { registerUser } from "@/../tests/utils/api";
+import { MissionsPage } from "@/../tests/pages/missions-page";
+import { WatchlistPage } from "@/../tests/pages/watchlist-page";
+import { loginUser, registerUser } from "@/../tests/utils/api";
 import { deleteUserByEmail, disconnectTestPrisma } from "@/../tests/utils/db";
 
 type TestFixtures = {
   userCredentials: TestUserCredentials;
   registeredUser: TestUserCredentials;
+  authenticatedRequest: APIRequestContext;
   loginPage: LoginPage;
   dashboardPage: DashboardPage;
+  missionsPage: MissionsPage;
+  watchlistPage: WatchlistPage;
   loggedInUser: TestUserCredentials;
 };
 
@@ -26,9 +32,15 @@ export const test = base.extend<TestFixtures>({
     await deleteUserByEmail(userCredentials.email);
   },
 
-  loggedInUser: async ({registeredUser, dashboardPage, loginPage}, use)=>{
-    await loginPage.goto()
-    await loginPage.login(registeredUser)
+  authenticatedRequest: async ({ request, registeredUser }, use) => {
+    const response = await loginUser(request, registeredUser);
+    expect(response.status()).toBe(200);
+    await use(request);
+  },
+
+  loggedInUser: async ({ registeredUser, dashboardPage, loginPage }, use) => {
+    await loginPage.goto();
+    await loginPage.login(registeredUser);
     await dashboardPage.expectLoaded();
     await use(registeredUser);
   },
@@ -39,6 +51,14 @@ export const test = base.extend<TestFixtures>({
 
   dashboardPage: async ({ page }, use) => {
     await use(new DashboardPage(page));
+  },
+
+  missionsPage: async ({ page }, use) => {
+    await use(new MissionsPage(page));
+  },
+
+  watchlistPage: async ({ page }, use) => {
+    await use(new WatchlistPage(page));
   }
 });
 

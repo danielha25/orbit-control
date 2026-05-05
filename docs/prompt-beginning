@@ -7,9 +7,10 @@ Read and follow these files as the source of truth:
 
 Continue Orbit Control from the active step in docs/current-phase.md.
 
-The MVP, Playwright baseline, real API dashboard enhancement, Docker, and CI are
-already implemented. Current work is the scoped design migration. Do not expand
-product scope beyond the current step unless explicitly requested.
+The MVP, feature-oriented Playwright baseline, real API dashboard enhancement,
+Docker, and CI quality gates are already implemented. Current work is the
+scoped design migration. Do not expand product scope beyond the current step
+unless explicitly requested.
 
 Preserve existing data-testid selectors during design-only refactors.
 
